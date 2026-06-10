@@ -1,13 +1,19 @@
 (() => {
     'use strict';
 
-    const pluginName = 'Mono Peakmeter';
-    const pluginVersion = '0.5.0';
+    const pluginName = 'Broadcast Meter';
+    const pluginVersion = '0.5.1';
     const AUDIO_SENSITIVITY = 520;
     const AUDIO_NOISE_FLOOR = 0.012;
     const CLIP_THRESHOLD = 98;
     const COMPACT_MODE = false;
 
+    let stereoActive = false;
+    let forcedMonoActive = false;
+    let rdsActive = false;
+    let rdsBlink = 0;
+
+    let clipActive = false;
     let clipHold = 0;
     let canvas;
     let ctx;
@@ -65,11 +71,10 @@
         }
 
         analyser = audioContext.createAnalyser();
-        analyser.fftSize = 256;
+        analyser.fftSize = 2048;
         analyser.smoothingTimeConstant = 0.65;
 
         dataArray = new Uint8Array(analyser.fftSize);
-
         const player = Stream.Fallback.Player;
 
         if (player.Amplification) {
@@ -122,7 +127,7 @@
         panel.style.overflow = 'hidden';
 
         const title = document.createElement('h2');
-        title.textContent = 'MONO PEAKMETER';
+        title.textContent = 'BROADCAST METER';
         title.style.letterSpacing = '1px';
 
         if (COMPACT_MODE) {
@@ -131,7 +136,7 @@
             title.style.marginTop = '8px';
             title.style.marginBottom = '0';
         } else {
-            title.style.marginTop = '4';
+            title.style.marginTop = '4px';
             title.style.marginBottom = '0';
         }
 
@@ -202,8 +207,12 @@
             peakA = Math.max(peakA - 0.18, displayA);
             if (displayA > CLIP_THRESHOLD) {
                 clipHold = 12;
+                clipActive = true;
             } else if (clipHold > 0) {
                 clipHold--;
+                clipActive = true;
+            } else {
+                clipActive = false;
             }
             drawMeter(displayS, displayA);
         }, 75);
@@ -214,10 +223,11 @@
             return;
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-
+        updateIndicators();
+        drawIndicators();
         drawBar({
             label: 'S',
-            y: COMPACT_MODE ? 5 : 8,
+            y: COMPACT_MODE ? 5 : 18,
             value: sValue,
             scale: COMPACT_MODE ? [] : ['1', '3', '5', '7', '9', '+10', '+20', '+30', '+40'],
             ticks: COMPACT_MODE ? [] : [10, 22, 34, 46, 58, 68, 78, 88, 98]
@@ -225,13 +235,12 @@
 
         drawBar({
             label: 'A',
-            y: COMPACT_MODE ? 24 : 42,
+            y: COMPACT_MODE ? 24 : 50,
             value: aValue,
             scale: COMPACT_MODE ? [] : ['0', '10', '30', '50', '70', '100'],
             ticks: COMPACT_MODE ? [] : [0, 10, 30, 50, 70, 100]
         });
 
-        drawClipIndicator();
     }
 
     function drawBar({
@@ -330,19 +339,78 @@
         }
     }
 
-    function drawClipIndicator() {
-        if (clipHold <= 0)
-            return;
+    function updateIndicators() {
+        const piElement = document.getElementById('data-pi');
+        const oldRdsActive = rdsActive;
 
-        ctx.font = 'bold 11px Arial, sans-serif';
-        ctx.textAlign = 'right';
-        ctx.fillStyle = 'rgba(255, 60, 60, 1)';
-        ctx.shadowBlur = 8;
-        ctx.shadowColor = 'rgba(255, 0, 0, 0.7)';
+        if (piElement) {
+            const pi = piElement.textContent.trim();
+            rdsActive = pi !== '' && pi !== '?' && pi !== '0000';
+        } else {
+            rdsActive = false;
+        }
 
-        ctx.fillText('CLIP', canvas.width - 18, 18);
+        if (rdsActive && rdsActive !== oldRdsActive) {
+            rdsBlink = 10;
+        } else if (rdsBlink > 0) {
+            rdsBlink--;
+        }
+
+        forcedMonoActive = detectForcedMono();
+        stereoActive = detectStereoFromUi() && !forcedMonoActive;
+    }
+
+    function detectForcedMono() {
+        return false;
+    }
+
+function detectStereoFromUi() {
+    const stereo = document.querySelector('.stereo-container .circle-container');
+
+    if (!stereo) {
+        return false;
+    }
+
+    return !stereo.classList.contains('opacity-half');
+}
+
+    function drawIndicators() {
+        const startX = 62;
+        const y = 8;
+
+        drawLed(startX, y, stereoActive, 'ST', '#7dff7d');
+        drawLed(startX + 48, y, forcedMonoActive, 'MO', '#9dc8ff');
+        drawLed(startX + 96, y, rdsActive, 'RDS', '#7ddcff', rdsBlink > 0);
+        drawLed(startX + 154, y, clipActive, 'CLIP', '#ff4a4a', clipActive);
+    }
+
+    function drawLed(x, y, active, label, color, blink = false) {
+        ctx.font = 'bold 10px Arial, sans-serif';
+        ctx.textAlign = 'left';
+
+        const blinkBoost = blink && (Math.floor(Date.now() / 120) % 2 === 0);
+
+        const size = 8;
+
+        if (active || blinkBoost) {
+            ctx.fillStyle = color;
+            ctx.shadowBlur = blinkBoost ? 18 : 12;
+            ctx.shadowColor = color;
+        } else {
+            ctx.fillStyle = 'rgba(120,120,120,0.25)';
+            ctx.shadowBlur = 0;
+        }
+
+        // Square LED
+        ctx.fillRect(x - size / 2, y - size / 2, size, size);
 
         ctx.shadowBlur = 0;
+
+        ctx.fillStyle = active || blinkBoost
+             ? 'rgba(230,245,255,0.95)'
+             : 'rgba(180,190,200,0.45)';
+
+        ctx.fillText(label, x + 10, y + 3);
     }
 
     function readSignalValuePercent() {
