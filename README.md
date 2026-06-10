@@ -31,6 +31,7 @@ Formerly known as: Mono Peakmeter
 - Full-size detailed meter mode
 - Theme aware colors
 - Responsive layout support
+- Automatic Update Check
 
 ---
 
