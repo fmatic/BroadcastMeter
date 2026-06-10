@@ -1,4 +1,4 @@
-# FM-DX Webserver Mono Peakmeter
+# FM-DX Webserver Broadcast Meter
 
 ![Release](https://img.shields.io/github/v/release/fmatic/MonoPeakMeter?display_name=tag&style=flat-square)
 ![Platform](https://img.shields.io/badge/platform-browser-green?style=flat-square)
