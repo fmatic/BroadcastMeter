@@ -4,6 +4,8 @@
 ![Platform](https://img.shields.io/badge/platform-browser-green?style=flat-square)
 [![Support my work](https://img.shields.io/badge/Support-My%20Work-333333?style=flat-square&logo=buymeacoffee&logoColor=white)](https://buymeacoffee.com/jannedx)
 
+![Mono Peakmeter Demo](docs/IMG_5430.GIF)
+
 A compact mono RF/audio peak meter plugin for FM-DX Webserver.
 
 Features:
