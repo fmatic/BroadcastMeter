@@ -16,6 +16,9 @@
     let analyser;
     let dataArray;
     let audioConnected = false;
+	
+	let peakS = 0;
+	let peakA = 0;
 
     document.addEventListener('DOMContentLoaded', () => {
         createPanel();
@@ -151,7 +154,9 @@
 
             displayS += (targetS - displayS) * 0.18;
             displayA += (targetA - displayA) * 0.22;
-
+			
+			peakS = Math.max(peakS - 0.12, displayS);
+			peakA = Math.max(peakA - 0.18, displayA);
             drawMeter(displayS, displayA);
         }, 75);
     }
@@ -178,57 +183,91 @@
         });
     }
 
-    function drawBar({ label, y, value, scale, ticks }) {
-        const x = 36;
-        const w = 250;
-        const h = 7;
+function drawBar({ label, y, value, scale, ticks }) {
+    const x = 36;
+    const w = 250;
+    const h = 7;
 
-        const fillW = clamp((value / 100) * w, 0, w);
+    const fillW = clamp((value / 100) * w, 0, w);
 
-        ctx.font = 'bold 11px Arial, sans-serif';
-        ctx.fillStyle = '#d9ffff';
-        ctx.textAlign = 'right';
-        ctx.fillText(label, x - 8, y + 7);
+    ctx.font = 'bold 11px Arial, sans-serif';
+    ctx.fillStyle = '#d9ffff';
+    ctx.textAlign = 'right';
+    ctx.fillText(label, x - 8, y + 7);
 
-        ctx.fillStyle = 'rgba(10, 25, 28, 0.95)';
-        ctx.fillRect(x, y, w, h);
+    // Background
+    ctx.fillStyle = 'rgba(10, 25, 28, 0.95)';
+    ctx.fillRect(x, y, w, h);
 
-       // Gradient fill
-		const gradient = ctx.createLinearGradient(x, 0, x + w, 0);
+    // Gradient fill
+    const gradient = ctx.createLinearGradient(x, 0, x + w, 0);
+    gradient.addColorStop(0.0, '#00ff66');
+    gradient.addColorStop(0.68, '#9dff00');
+    gradient.addColorStop(0.84, '#ffd000');
+    gradient.addColorStop(1.0, '#ff3030');
 
-		gradient.addColorStop(0.0, '#00ff66');
-		gradient.addColorStop(0.68, '#9dff00');
-		gradient.addColorStop(0.84, '#ffd000');
-		gradient.addColorStop(1.0, '#ff3030');
+    ctx.shadowBlur = 8;
+    ctx.shadowColor = 'rgba(0,255,160,0.35)';
+    ctx.fillStyle = gradient;
+    ctx.fillRect(x, y, fillW, h);
+    ctx.shadowBlur = 0;
 
-		ctx.fillStyle = gradient;
-		ctx.fillRect(x, y, fillW, h);
-        ctx.fillStyle = 'rgba(190, 255, 230, 0.45)';
-        ctx.fillRect(x, y, fillW, 1);
+  // Peak hold line
+	const peakValue = label === 'S' ? peakS : peakA;
+	const peakX = x + (clamp(peakValue, 0, 100) / 100) * w;
 
-        ctx.strokeStyle = 'rgba(200, 255, 255, 0.16)';
-        ctx.strokeRect(x, y, w, h);
+	if (peakValue > 2) {
+    // Dark outline / contrast
+    ctx.shadowBlur = 0;
+    ctx.strokeStyle = 'rgba(0, 0, 0, 0.85)';
+    ctx.lineWidth = 4;
 
-        ctx.font = '10px Arial, sans-serif';
-        ctx.textAlign = 'center';
-        ctx.fillStyle = '#ffffff';
+    ctx.beginPath();
+    ctx.moveTo(peakX, y - 3);
+    ctx.lineTo(peakX, y + h + 3);
+    ctx.stroke();
 
-        ticks.forEach((tick, i) => {
-            const tx = x + (tick / 100) * w;
+    // Bright peak line
+    ctx.shadowBlur = 8;
+    ctx.shadowColor = 'rgba(255,255,180,0.95)';
+    ctx.strokeStyle = 'rgba(255,255,160,1)';
+    ctx.lineWidth = 2;
 
-            ctx.strokeStyle = 'rgba(255,255,255,0.65)';
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            ctx.moveTo(tx, y + h + 1);
-            ctx.lineTo(tx, y + h + 4);
-            ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(peakX, y - 3);
+    ctx.lineTo(peakX, y + h + 3);
+    ctx.stroke();
 
-            if (scale[i]) {
-                ctx.fillText(scale[i], tx, y + h + 16);
-            }
-        });
-    }
+    ctx.shadowBlur = 0;
+}
+    // Glow line
+    ctx.fillStyle = 'rgba(190, 255, 230, 0.45)';
+    ctx.fillRect(x, y, fillW, 1);
 
+    // Border
+    ctx.strokeStyle = 'rgba(200, 255, 255, 0.16)';
+    ctx.strokeRect(x, y, w, h);
+
+    // Ticks and labels
+    ctx.font = '10px Arial, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#ffffff';
+
+    ticks.forEach((tick, i) => {
+        const tx = x + (tick / 100) * w;
+
+        ctx.strokeStyle = 'rgba(255,255,255,0.65)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(tx, y + h + 1);
+        ctx.lineTo(tx, y + h + 4);
+        ctx.stroke();
+
+        if (scale[i]) {
+            ctx.fillText(scale[i], tx, y + h + 16);
+        }
+    });
+}
     function readSignalValuePercent() {
         const signalElement = document.getElementById('data-signal');
         const decimalElement = document.getElementById('data-signal-decimal');
