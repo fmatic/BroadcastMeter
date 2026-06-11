@@ -1,5 +1,13 @@
 # Signal Scope for FM-DX-Webserver
 
+![Release](https://img.shields.io/github/v/release/fmatic/BroadcastMeter?display_name=tag&style=flat-square)
+![Platform](https://img.shields.io/badge/platform-browser-green?style=flat-square)
+![Version](https://img.shields.io/badge/version-0.5.0-00c8ff?style=flat-square)
+[![Support my work](https://img.shields.io/badge/Support-My%20Work-333333?style=flat-square&logo=buymeacoffee&logoColor=white)](https://buymeacoffee.com/jannedx)
+
+
+![Broadcast Meter Demo](docs/IMG_5472.GIF)
+
 Signal Scope is a modern RF signal and audio modulation meter plugin for FM-DX-Webserver.
 
 It combines broadcast-style metering, stereo/RDS indicators and customizable visual themes into a lightweight native-looking plugin.
