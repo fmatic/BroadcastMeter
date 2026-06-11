@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////////////////
 ///                                                                                ///
-///  SIGNAL SCOPE FOR FM-DX-WEBSERVER (V0.5.1)                                     ///
+///  BROADCAST METER FOR FM-DX-WEBSERVER (V0.5.1)                                  ///
 ///                                                                                ///
 ///  RF signal and audio modulation meter with broadcast-style status indicators.  ///
 ///                                                                                ///
@@ -18,7 +18,7 @@
 (() => {
     'use strict';
 
-    const pluginName = 'Signal Scope';
+    const pluginName = 'Broadcast Meter';
     const pluginVersion = '0.5.1';
     const AUDIO_SENSITIVITY = 520;
     const AUDIO_NOISE_FLOOR = 0.012;
@@ -27,8 +27,8 @@
 
     const pluginSetupOnlyNotify = true;
     const CHECK_FOR_UPDATES = true;
-    const pluginHomepageUrl = 'https://github.com/fmatic/SignalScope/releases';
-    const pluginUpdateUrl = 'https://raw.githubusercontent.com/fmatic/SignalScope/main/SignalScope/signalscope.js';
+    const pluginHomepageUrl = 'https://github.com/fmatic/BroadcastMeter/releases';
+    const pluginUpdateUrl = 'https://raw.githubusercontent.com/fmatic/BroadcastMeter/main/BroadcastMeter/broadcastmeter.js';
 
     let stereoActive = false;
     let forcedMonoActive = false;
@@ -132,9 +132,9 @@
                 document.querySelector('.wrapper-outer .sidenav-content') ||
                 document.querySelector('.sidenav-content');
 
-            if (updateIcon && !document.getElementById('signal-scope-update-dot')) {
+            if (updateIcon && !document.getElementById('broadcast-meter-update-dot')) {
                 const redDot = document.createElement('span');
-                redDot.id = 'signal-scope-update-dot';
+                redDot.id = 'broadcast-meter-update-dot';
                 redDot.style.display = 'block';
                 redDot.style.width = '12px';
                 redDot.style.height = '12px';
@@ -224,14 +224,14 @@
 
         const panel = document.createElement('div');
         panel.className = 'panel-33';
-        panel.id = 'signal-scope-container';
+        panel.id = 'mono-peakmeter-container';
         panel.style.width = '33%';
         panel.style.height = COMPACT_MODE ? '96px' : '123px';
         panel.style.position = 'relative';
         panel.style.overflow = 'hidden';
 
         const title = document.createElement('h2');
-        title.textContent = 'SIGNAL SCOPE';
+        title.textContent = 'BROADCAST METER';
         title.style.letterSpacing = '1px';
 
         if (COMPACT_MODE) {
@@ -247,7 +247,7 @@
         panel.appendChild(title);
 
         canvas = document.createElement('canvas');
-        canvas.id = 'signal-scope-canvas';
+        canvas.id = 'mono-peakmeter-canvas';
         canvas.width = 320;
         canvas.height = COMPACT_MODE ? 44 : 74;
         canvas.title = `${pluginName} ${pluginVersion}`;
@@ -273,24 +273,24 @@
         const style = document.createElement('style');
 
         style.textContent = `
-        #signal-scope-container {
+        #mono-peakmeter-container {
             background: transparent !important;
             backdrop-filter: none !important;
             border-radius: 0;
             box-shadow: none;
         }
 
-       #signal-scope-container h2 {
+       #mono-peakmeter-container h2 {
     text-shadow: none !important;
 }
         @media only screen and (max-width: 768px) {
-            #signal-scope-container {
+            #mono-peakmeter-container {
                 width: 100% !important;
                 height: 118px;
                 margin-top: 8px;
             }
 
-            #signal-scope-canvas {
+            #mono-peakmeter-canvas {
                 width: 300px !important;
             }
         }
