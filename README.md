@@ -12,8 +12,6 @@ Signal Scope is a modern RF signal and audio modulation meter plugin for FM-DX-W
 
 It combines broadcast-style metering, stereo/RDS indicators and customizable visual themes into a lightweight native-looking plugin.
 
-Developed in Finland by Janne Heinikangas / JanneDX.
-
 ## Features
 
 - Real-time RF signal meter
@@ -130,6 +128,7 @@ MIT License
 ## Author
 
 Janne Heinikangas / JanneDX
+Developed in Finland 🇫🇮
 
 GitHub:
 https://github.com/fmatic/SignalScope
