@@ -1,87 +1,127 @@
-# FM-DX Webserver Signal Scope
+# Signal Scope for FM-DX-Webserver
 
-![Release](https://img.shields.io/github/v/release/fmatic/BroadcastMeter?display_name=tag&style=flat-square)
-![Platform](https://img.shields.io/badge/platform-browser-green?style=flat-square)
-![Version](https://img.shields.io/badge/version-0.5.0-00c8ff?style=flat-square)
-[![Support my work](https://img.shields.io/badge/Support-My%20Work-333333?style=flat-square&logo=buymeacoffee&logoColor=white)](https://buymeacoffee.com/jannedx)
+Signal Scope is a modern RF signal and audio modulation meter plugin for FM-DX-Webserver.
 
-![Broadcast Meter Demo](docs/IMG_5472.GIF)
+It combines broadcast-style metering, stereo/RDS indicators and customizable visual themes into a lightweight native-looking plugin.
 
-A modern RF/audio peak meter plugin for FM-DX Webserver inspired by professional broadcast monitor equipment and classic studio peak meters.
-
-Designed especially for FM-DX monitoring with smooth animations, peak hold indicators and lightweight canvas rendering.
-
-Formerly known as: Mono Peakmeter
-
----
+Developed in Finland by Janne Heinikangas / JanneDX.
 
 ## Features
 
-- Live RF signal meter
-- Live audio modulation meter
+- Real-time RF signal meter
+- Real-time audio modulation meter
 - Peak hold indicators
-- Stereo indicator
-- RDS activity indicator
-- CLIP warning indicator
-- Smooth interpolation and animations
-- Broadcast style gradient meters
-- Lightweight canvas rendering
-- Native FM-DX Webserver UI integration
-- Compact Mode
-- Full-size detailed meter mode
-- Theme aware colors
-- Responsive layout support
-- Automatic Update Check
+- Stereo / Mono / RDS / CLIP LEDs
+- Multiple meter styles
+- Theme system
+- Native FM-DX-Webserver visual integration
+- Compact and lightweight
+- Mobile friendly
+- Settings popup UI
+- Update notification support
 
----
+## Meter Styles
 
-## Screenshot
+- Classic
+- Segmented
+- LED
+- Thin
+- Neon
 
-- Full-size broadcast monitor style mode
-- Compact lightweight mode for smaller layouts
+## Themes
 
----
+- Webserver Theme
+- Matrix Green
+- DX Green
+- Amber Orange
+- Arctic Cyan
+- Nightwish Purple
 
 ## Installation
 
-1. Download the latest release from the Releases page
-2. Extract the plugin into your FM-DX Webserver `plugins` directory
-3. Restart FM-DX Webserver
+1. Download the latest release ZIP
+2. Extract the `SignalScope` folder
+3. Copy the folder into your FM-DX-Webserver plugins directory
+4. Restart FM-DX-Webserver
+5. Enable the plugin from Plugin Management
 
----
+## Settings
 
-## Compact Mode
+Signal Scope includes a built-in settings popup accessible from the gear icon.
 
-Enable lightweight compact mode:
+Current settings:
 
-`const COMPACT_MODE = true;`
+- Theme selection
+- Meter style selection
 
-Enable full-size broadcast monitor mode:
+Settings are stored locally in browser localStorage.
 
-`const COMPACT_MODE = false;`
+## LocalStorage Keys
 
----
+```js
+SIGNAL_SCOPE_THEME
+SIGNAL_SCOPE_METER_STYLE
+```
 
-## Planned Features
+Example:
 
-- Improved stereo / mono detection
-- Additional meter skins
-- Vintage broadcast processor themes
-- Tune Panel integration
-- More responsive layouts
-- Advanced peak algorithms
-- Customizable LED indicators
+```js
+localStorage.setItem('SIGNAL_SCOPE_THEME', 'matrixGreen');
+localStorage.setItem('SIGNAL_SCOPE_METER_STYLE', 'neon');
+location.reload();
+```
 
----
+## Supported Themes
 
-## Support
+```txt
+webserver
+matrixGreen
+dxGreen
+amberOrange
+arcticCyan
+nightwishPurple
+```
 
-If you like this project and want to support development:
+## Supported Meter Styles
 
-[Buy Me a Coffee](https://buymeacoffee.com/jannedx)
+```txt
+classic
+segmented
+led
+thin
+neon
+```
 
----
+## Roadmap
+
+### v0.5.3
+
+- Animated theme transitions
+- Optional glass panel
+- Optional stronger glow
+- Compact XL / Mini modes
+- Peak hold speed control
+- LED brightness control
+
+## Future Ideas
+
+- Vertical mode
+- Retro tuner skin
+- Analog needle mode
+- Oscilloscope waveform mode
+- Stereo image meter
+
+## Credits
+
+Special thanks to the FM-DX-Webserver community for ideas, testing and feedback.
 
 ## License
 
-MIT
+MIT License
+
+## Author
+
+Janne Heinikangas / JanneDX
+
+GitHub:
+https://github.com/fmatic/SignalScope
